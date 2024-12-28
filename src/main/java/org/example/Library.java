@@ -1,6 +1,16 @@
 package org.example;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.net.URISyntaxException;
+
+
+
 
 interface blueprint {
 
@@ -36,6 +46,38 @@ public class Library implements blueprint {
 //        books.put(10, new String[]{"India My Dream", "Dr. A.P.J. Abdul Kalam", "2002", "available"});
 //    }
 
+        public void importBooksFromResources() {
+            try {
+                // Get the path to the JSON file in the resources folder
+                URL resource = getClass().getClassLoader().getResource("programming_books.json");
+
+                // Check if the resource is available
+                if (resource == null) {
+                    throw new IllegalArgumentException("File not found in resources folder");
+                }
+
+                // Convert the URL to a File
+                File jsonFile = new File(resource.toURI());
+
+                // Parse the JSON file using Jackson ObjectMapper
+                ObjectMapper objectMapper = new ObjectMapper();
+                List<Map<String, Object>> bookList = objectMapper.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {});
+
+                // Add each book to the library
+                for (Map<String, Object> book : bookList) {
+                    int id = (int) book.get("id");
+                    String name = (String) book.get("name");
+                    String author = (String) book.get("author");
+                    String year = (String) book.get("year");
+
+                    // Add book to library
+                    String result = add_Book(id, name, author, year);
+//                    System.out.println("Book ID: " + id + " => " + result);
+                }
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
 
     @Override
     public String add_Book(int id, String name, String author, String year) {

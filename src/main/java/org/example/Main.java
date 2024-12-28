@@ -9,6 +9,7 @@ public class Main {
         int id, i, temp = 0;
         String name, author, year, user_name, password;
         Library l = new Library();
+        l.importBooksFromResources();
         Scanner sc = new Scanner(System.in);
         boolean b1 = true;
 
